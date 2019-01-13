@@ -1,30 +1,39 @@
 #include "ofApp.h"
 
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
+  
+  sound.load("audio.wav");
+  sound.play();
+  sound.setVolume(1);
+  sound.setSpeed(0.1);
 
-  // sensor1 = false;
-  // sensor4 = false;
+  A_PIN = 14;
 
   if(wiringPiSetup() == -1){
     printf("Error on wiringPi setup\n");
 }
-
-    positive_polarity = true;
-
-    pinMode(1,OUTPUT);
-    pinMode(4,OUTPUT);
-
+    pinMode(14,INPUT);
+    sensor14 = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-  tick();
-  usleep(1000000);
-  std::cout << "tick" << '\n';
+  if(digitalRead(14)!=0){
+    sensor14 = true;
+    std::cout << "true" << '\n'; //sound playing normally
+} else {
+    sensor14 = false;
+    std::cout << "false" << '\n'; //sound playing really slow
+}
+
+  if (sensor14 == true){
+    rampUp();
+  }
+  if (sensor14 == false){
+    rampDown();
+  }
 
 }
 
@@ -33,40 +42,48 @@ void ofApp::draw(){
 
 
 }
+
 //--------------------------------------------------------------
-void ofApp::tick(){
+void ofApp::rampUp(){
 
-//cout << "hello" << endl;
-  // if (positive_polarity){
-	// //cout << sensor5 << endl;
-  //     sensor1 = true;
-  //     sensor4 = false;
-  //     usleep(30);
-  //     sensor1 = false;
-  // }else{
-  //
-  //   sensor4 = true;
-  //   sensor1 = false;
-  //   usleep(30);
-  //   sensor4 = false;
-  // }
-  //
-  // positive_polarity = false;
+    float checkUp;
 
-  if (positive_polarity){
+    checkUp = sound.getSpeed();
 
-      digitalWrite(1, HIGH);
-      digitalWrite(4, LOW);
-      delay(500);
-      digitalWrite(1, LOW);
-    }else{
-      digitalWrite(4, HIGH);
-      digitalWrite(1, LOW);
-      delay(500);
-      digitalWrite(4, LOW);
+    if (checkUp < 0.2){
+
+        for(float j = 0.1; j < 1.1; j = j + 0.1){
+            usleep(100000);//slight delay to gradually increase value.
+            sound.setSpeed(j);
+            cout << j << endl;
+        }
+
+    }else if (checkUp > 0.2){
+
+        sound.setSpeed(1);
     }
 
-    //positive_polarity = false;
+}
+//--------------------------------------------------------------
+void ofApp::rampDown(){
+
+    float checkDown;
+
+    checkDown = sound.getSpeed();
+
+    if (checkDown > 0.2){
+
+    for(float a = 1; a > 0; a = a - 0.1){
+            usleep(100000); //delay
+            sound.setSpeed(a);
+            //cout << "ramp down : " << a << endl;
+            cout << a << endl;
+        }
+
+    }else if (checkDown < 0.2){
+
+        sound.setSpeed(0.1);
+    }
 
 }
 

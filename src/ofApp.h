@@ -20,10 +20,15 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		void rampUp();
+		void rampDown();
+
 		void tick();
+		void pulse(int pos_pin, int neg_pin);
 
-		bool sensor1;
-		bool sensor4;
+		bool sensor14;
 
-		bool positive_polarity;
+		ofSoundPlayer sound;
+
+		int A_PIN;
 };
