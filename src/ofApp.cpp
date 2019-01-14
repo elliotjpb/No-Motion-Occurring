@@ -2,12 +2,12 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-  
+  //audio set up
   sound.load("audio.wav");
   sound.play();
   sound.setVolume(1);
   sound.setSpeed(0.1);
-
+  //Interfacing with GPIO pins with wiriringPi
   A_PIN = 14;
 
   if(wiringPiSetup() == -1){
@@ -22,17 +22,17 @@ void ofApp::update(){
 
   if(digitalRead(14)!=0){
     sensor14 = true;
-    std::cout << "true" << '\n'; //sound playing normally
+    std::cout << "true" << '\n'; //sound playing slow
 } else {
     sensor14 = false;
-    std::cout << "false" << '\n'; //sound playing really slow
+    std::cout << "false" << '\n'; //sound playing normal
 }
 
   if (sensor14 == true){
-    rampUp();
+    rampDown(); //When motion detected play sound really slow
   }
   if (sensor14 == false){
-    rampDown();
+    rampUp(); // When no motion detected play sound normally
   }
 
 }
